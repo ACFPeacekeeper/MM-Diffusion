@@ -5,6 +5,7 @@ import os
 import numpy as np
 import torch as th
 import torch.distributed as dist
+from pathlib import Path
 from einops import rearrange, repeat
 from mm_diffusion import dist_util, logger
 from mm_diffusion.common import set_seed_logger_random, save_audio, save_img, save_multimodal, delete_pkl
@@ -50,7 +51,6 @@ def main():
     logger.configure(args.output_dir)
     args = set_seed_logger_random(args)
 
-
     logger.log("creating model and diffusion...")
     multimodal_model, multimodal_diffusion = create_model_and_diffusion(
          **args_to_dict(args, [key for key in model_and_diffusion_defaults().keys()])
@@ -89,8 +89,10 @@ def main():
     data = load_training_data(args)
     
     for multimodal_save_path in multimodal_name_list:
+        save_path = Path(multimodal_save_path).expanduser()
+        save_path = Path.cwd() / save_path.relative_to(save_path.anchor)
         multimodal_model.load_state_dict_(
-            dist_util.load_state_dict(multimodal_save_path, map_location="cpu"), is_strict=args.is_strict
+            dist_util.load_state_dict(save_path, map_location="cpu"), is_strict=args.is_strict
         )
         
         multimodal_model.to(dist_util.dev())
@@ -102,9 +104,11 @@ def main():
         model_name = multimodal_save_path.split('/')[-1]
 
         groups= 0
-        gt_save_path = os.path.join(args.output_dir, model_name, "gt")
-        reconstruct_save_path = os.path.join(args.output_dir, model_name, "reconstruct")
-        sr_save_path = os.path.join(args.output_dir, model_name, "sr")
+        output_dir = Path(args.output_dir).expanduser()
+        output_dir = Path.cwd() / output_dir.relative_to(output_dir.anchor)
+        gt_save_path = os.path.join(output_dir, model_name, "gt")
+        reconstruct_save_path = os.path.join(output_dir, model_name, "reconstruct")
+        sr_save_path = os.path.join(output_dir, model_name, "sr")
         if dist.get_rank() == 0:
             os.makedirs(gt_save_path, exist_ok=True)
             os.makedirs(reconstruct_save_path, exist_ok=True)

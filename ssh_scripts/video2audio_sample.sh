@@ -12,9 +12,9 @@ DIFFUSION_FLAGS="--diffusion_steps 1000 --noise_schedule linear
 --all_save_num 48 --save_type mp4  --devices 7
 --batch_size 2   --is_strict True --sample_fn ddpm --classifier_scale 3.0"
 
-MODEL_PATH="/data10/rld/outputs/MM-Diffusion/models/AIST++.pt"
-OUT_DIR="/data10/rld/outputs/MM-Diffusion/video2audio/video2audio"
-REF_PATH="/data10/rld/data/AIST++_crop/train"
+MODEL_PATH="/model_weights/AIST++.pt"
+OUT_DIR="/outputs/video2audio/video2audio"
+REF_PATH="/data/AIST++_crop/train"
 NUM_GPUS=1
 
 mpiexec -n $NUM_GPUS  python3 py_scripts/video2audio_sample.py  \

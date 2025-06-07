@@ -7,6 +7,7 @@ import torch as th
 import os
 import pickle
 import torch as th
+from pathlib import Path
 from torch.utils.data import DataLoader, Dataset
 from torchvision.datasets.video_utils import VideoClips
 from torchvision import transforms as T
@@ -43,14 +44,15 @@ def load_data(
         raise ValueError("unspecified data directory")
    
     all_files = []
-    
-    all_files.extend(_list_video_files_recursively(data_dir)) 
+    dir = Path(data_dir).expanduser()
+    dir = Path.cwd() / dir.relative_to(dir.anchor)
+    all_files.extend(_list_video_files_recursively(dir)) 
     if MPI.COMM_WORLD.Get_rank()==0:
         print(f"len(data loader):{len(all_files)}")
        
     clip_length_in_frames = video_size[0]
     frames_between_clips = 1
-    meta_fname = os.path.join(data_dir, f"video_clip_f{clip_length_in_frames}_g{frames_between_clips}_r{video_fps}.pkl")
+    meta_fname = os.path.join(dir, f"video_clip_f{clip_length_in_frames}_g{frames_between_clips}_r{video_fps}.pkl")
    
     if not os.path.exists(meta_fname):
         if MPI.COMM_WORLD.Get_rank()==0:

@@ -11,6 +11,7 @@ import time
 import datetime
 import tempfile
 import warnings
+from pathlib import Path
 from collections import defaultdict
 from contextlib import contextmanager
 
@@ -452,8 +453,9 @@ def configure(dir=None, format_strs=None, comm=None, log_suffix=""):
             datetime.datetime.now().strftime("openai-%Y-%m-%d-%H-%M-%S-%f"),
         )
     assert isinstance(dir, str)
-    dir = os.path.expanduser(dir)
-    os.makedirs(os.path.expanduser(dir), exist_ok=True)
+    dir = Path(dir).expanduser()
+    dir = Path.cwd() / dir.relative_to(dir.anchor)
+    os.makedirs(dir, exist_ok=True)
 
     rank = get_rank_without_mpi_import()
     if rank > 0:

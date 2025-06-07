@@ -19,10 +19,10 @@ SRMODEL_FLAGS="--sr_attention_resolutions 8,16,32  --large_size 256
 
 SR_DIFFUSION_FLAGS="--sr_diffusion_steps 1000  --sr_sample_fn ddim --sr_timestep_respacing ddim25 "
 
-MULTIMODAL_MODEL_PATH="/data10/rld/outputs/MM-Diffusion/models/AIST++.pt"
-SR_MODEL_PATH="/data10/rld/ouotputs/MM-Diffusion/models/AIST++_SR.pt"
-OUT_DIR="/data10/rld/outputs/MM-Diffusion/audio2video/"
-REF_PATH="/data10/rld/data/AIST++_crop/train"
+MULTIMODAL_MODEL_PATH="/model_weights/AIST++.pt"
+SR_MODEL_PATH="/model_weights/AIST++_SR.pt"
+OUT_DIR="/outputs/audio2video/"
+REF_PATH="/data/AIST++_crop/train"
 NUM_GPUS=1
 
 mpiexec -n $NUM_GPUS python py_scripts/audio2video_sample_sr.py  \

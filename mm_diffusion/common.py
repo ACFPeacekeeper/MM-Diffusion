@@ -5,6 +5,7 @@ import torch as th
 import numpy as np
 import glob
 from PIL import Image
+from pathlib import Path
 from einops import rearrange
 from moviepy.video.io.ImageSequenceClip import ImageSequenceClip
 from moviepy.audio.AudioClip import AudioArrayClip
@@ -104,8 +105,10 @@ def set_seed_logger_random(args):
     '''
     training or evaluation on multiple GPUs requires different randomness
     '''
-    if os.path.exists(args.output_dir)==False and dist.get_rank()==0:
-        os.makedirs(args.output_dir)
+    dir = Path(args.output_dir).expanduser()
+    dir = Path.cwd() / dir.relative_to(dir.anchor)
+    if os.path.exists(dir)==False and dist.get_rank()==0:
+        os.makedirs(dir)
     # random.seed(args.seed)
     # os.environ['PYTHONHASHSEED'] = str(args.seed)
     # np.random.seed(args.seed)

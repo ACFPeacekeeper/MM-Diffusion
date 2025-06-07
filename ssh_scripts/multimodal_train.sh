@@ -14,8 +14,8 @@ TRAIN_FLAGS="--lr 0.0001 --batch_size 4
 DIFFUSION_FLAGS="--noise_schedule linear --diffusion_steps 1000 --save_type mp4 --sample_fn ddpm" 
 
 # Modify the following pathes to your own paths
-DATA_DIR="/home/rld/dataset/landscape/train"
-OUTPUT_DIR="/home/rld/outputs/MM-Diffusion/debug/"
+DATA_DIR="/data/AIST++_crop/train"
+OUTPUT_DIR="/outputs/debug/"
 NUM_GPUS=8
 
 mpiexec -n $NUM_GPUS  python3 py_scripts/multimodal_train.py --data_dir ${DATA_DIR} --output_dir ${OUTPUT_DIR} $MODEL_FLAGS $TRAIN_FLAGS $VIDEO_FLAGS $DIFFUSION_FLAGS 
